@@ -1,45 +1,221 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# AAA Protocol Simulation in NS-3
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+Ovaj projekt predstavlja simulaciju AAA (Authentication, Authorization, and Accounting) protokola, sličnog RADIUS standardu, implementiranu unutar ns-3 mrežnog simulatora. Fokus simulacije je na mjerenju performansi autentifikacijskog toka između klijenta i servera u kontrolisanim mrežnim uslovima.
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+## Opis projekta
 
----
+Simulacija koristi Point-to-Point mrežni model kako bi demonstrirala razmjenu poruka između klijenta i AAA servera. Implementirani su specifični tipovi poruka kao što su Access-Request, Access-Accept, Access-Reject i Accounting-Request. 
 
-## Edit a file
+Glavni cilj je analiza uticaja mrežnih gubitaka (Error Rate) i kašnjenja procesiranja na serveru na ukupnu pouzdanost i brzinu autentifikacije.
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+## Funkcionalnosti
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+- Simulacija kompletnog toka: Klijent šalje zahtjev, server obrađuje i šalje odgovor.
+- Modeliranje grešaka: Mogućnost uvođenja gubitaka paketa na linku putem RateErrorModel-a.
+- Vjerovatnoća odbijanja: Server može nasumično odbiti zahtjeve na osnovu definisanog parametra (rejectProb).
+- Retransmisije: Klijent automatski ponovo šalje paket ako ne dobije odgovor u predviđenom roku, uz praćenje broja pokušaja.
+- Praćenje statistike: Detaljan ispis RTT-a, stope uspješnosti (ASR) i broja retransmisija.
+- Export u CSV: Automatsko čuvanje svih rezultata u tabelarni format za kasniju analizu.
 
----
+## Struktura projekta
 
-## Create a file
+Projekat se sastoji od sledećih komponenti:
 
-Next, you’ll add a new file to this repository.
+### Aplikacijski sloj (`ns-3/src/applications/model/`)
+- `sptm-sink.h` / `sptm-sink.cc` - Server aplikacija koja prima i obrađuje AAA zahtjeve
+- `sptm-header.h` / `sptm-header.cc` - Definicija SPTM protokol zaglavlja
+- `sptm-client.h` / `sptm-client.cc` - Klijent aplikacija koja šalje AAA zahtjeve
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+### Helper klase (`ns-3/src/applications/helper/`)
+- `sptm-sink-helper.h` / `sptm-sink-helper.cc` - Helper za jednostavno postavljanje server aplikacije
+- `sptm-header-helper.h` / `sptm-header-helper.cc` - Helper za rad sa SPTM zaglavljima
+- `sptm-client-helper.h` / `sptm-client-helper.cc` - Helper za jednostavno postavljanje klijent aplikacije
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+### Simulacioni scenario (`ns-3/scratch/`)
+- `aaa_sim.cc` - Glavni simulacioni fajl sa topologijom i scenarijima
 
----
+### Konfiguracioni fajlovi
+- `ns-3/src/applications/CMakeLists.txt` - Build konfiguracija za applications modul
 
-## Clone a repository
+## Preduslovi
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+Za uspješno pokretanje simulacije potrebno je imati instaliran:
+- ns-3 simulator (verzija 3.36 ili novija koja podržava CMake build sistem)
+- C++ kompajler (GCC ili Clang) sa C++17 podrškom
+- Python 3 (za ns-3 build sistem)
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+## Instalacija i postavljanje
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+### Korak 1: Priprema direktorijuma
+
+Provjerite da li imate sljedeću strukturu direktorijuma u vašoj ns-3 instalaciji:
+```
+ns-3/
+├── src/
+│   └── applications/
+│       ├── model/
+│       ├── helper/
+│       └── CMakeLists.txt
+└── scratch/
+```
+
+### Korak 2: Kopiranje aplikacijskih fajlova
+
+Kopirajte SPTM aplikacijske fajlove u `model` direktorij:
+
+```bash
+cd /putanja/do/ns-3/src/applications/model/
+
+# Kopirajte sljedeće fajlove u ovaj direktorij:
+# - sptm-sink.h
+# - sptm-sink.cc
+# - sptm-header.h
+# - sptm-header.cc
+# - sptm-client.h
+# - sptm-client.cc
+```
+
+**Primjer kopiranja (ako su fajlovi u Downloads folderu):**
+```bash
+cp ~/Downloads/sptm-sink.h .
+cp ~/Downloads/sptm-sink.cc .
+cp ~/Downloads/sptm-header.h .
+cp ~/Downloads/sptm-header.cc .
+cp ~/Downloads/sptm-client.h .
+cp ~/Downloads/sptm-client.cc .
+```
+
+### Korak 3: Kopiranje helper fajlova
+
+Kopirajte SPTM helper fajlove u `helper` direktorij:
+
+```bash
+cd /putanja/do/ns-3/src/applications/helper/
+
+# Kopirajte sljedeće fajlove u ovaj direktorij:
+# - sptm-sink-helper.h
+# - sptm-sink-helper.cc
+# - sptm-header-helper.h
+# - sptm-header-helper.cc
+# - sptm-client-helper.h
+# - sptm-client-helper.cc
+```
+
+**Primjer kopiranja:**
+```bash
+cp ~/Downloads/sptm-sink-helper.h .
+cp ~/Downloads/sptm-sink-helper.cc .
+cp ~/Downloads/sptm-header-helper.h .
+cp ~/Downloads/sptm-header-helper.cc .
+cp ~/Downloads/sptm-client-helper.h .
+cp ~/Downloads/sptm-client-helper.cc .
+```
+
+### Korak 4: Ažuriranje CMakeLists.txt
+
+Otvorite `ns-3/src/applications/CMakeLists.txt` fajl u text editoru:
+
+```bash
+cd /putanja/do/ns-3/src/applications/
+nano CMakeLists.txt
+# ili
+gedit CMakeLists.txt
+```
+
+Pronađite sekciju gdje su navedeni source fajlovi (obično počinje sa `set(source_files` ili slično) i dodajte:
+
+```cmake
+model/sptm-sink.cc
+model/sptm-header.cc
+model/sptm-client.cc
+helper/sptm-sink-helper.cc
+helper/sptm-header-helper.cc
+helper/sptm-client-helper.cc
+```
+
+Zatim pronađite sekciju gdje su navedeni header fajlovi (obično `set(header_files` ili slično) i dodajte:
+
+```cmake
+model/sptm-sink.h
+model/sptm-header.h
+model/sptm-client.h
+helper/sptm-sink-helper.h
+helper/sptm-header-helper.h
+helper/sptm-client-helper.h
+```
+
+Sačuvajte izmjene i zatvorite editor.
+
+### Korak 5: Kopiranje simulacionog fajla
+
+Kopirajte glavni simulacioni fajl u `scratch` direktorij:
+
+```bash
+cd /putanja/do/ns-3/scratch/
+cp ~/Downloads/aaa_sim.cc .
+```
+
+### Korak 6: Build projekta
+
+Pozicionirajte se u glavni ns-3 direktorij i izvršite build:
+
+```bash
+cd /putanja/do/ns-3/
+
+# Konfigurišite build
+./ns3 configure --enable-examples --enable-tests
+
+# Izgradite projekat
+./ns3 build
+```
+
+# Pokretanje simulacije
+
+Simulaciju pokrećete standardnom **ns-3** komandom. Možete koristiti podrazumijevane parametre ili unijeti vlastite putem komandne linije.
+
+## Primer osnovnog pokretanja
+```bash
+./ns3 run "scratch/aaa_sim"
+
+# Parametri komandne linije
+
+Simulacija podržava sljedeće argumente za prilagođavanje scenarija:
+
+| Argument      | Opis                                           | Podrazumijevano                |
+|---------------|-----------------------------------------------|--------------------------------|
+| `--clients`   | Broj AAA klijenata                            | 1                              |
+| `--packets`   | Broj sesija po klijentu                       | 10                             |
+| `--interval`  | Razmak između sesija (sekunde)                | 1.0                            |
+| `--errorRate` | Stopa gubitka paketa na mreži (0.0 - 1.0)     | 0.0                            |
+| `--rejectProb`| Vjerovatnoća odbijanja zahtjeva na serveru    | 0.0                            |
+| `--procDelay` | Kašnjenje obrade na serveru (ms)              | 10                             |
+| `--csvFile`   | Ime izlazne CSV datoteke sa rezultatima       | aaa_simulation_results.csv     |
+| `--enableCsv` | Omogući ili onemogući CSV izvoz (true/false)  | true                           |
+
+# Primer pokretanja sa 5% gubitka paketa i 20% šanse za odbijanje zahtjeva
+
+```bash
+./ns3 run "scratch/aaa_sim --errorRate=0.05 --rejectProb=0.2"
+
+# Analiza rezultata
+
+Nakon završetka simulacije, u konzoli će se pojaviti rezime koji uključuje:
+
+- Ukupan broj poslanih paketa i jedinstvenih sesija  
+- Broj primljenih paketa na strani klijenta i servera  
+- Broj prihvaćenih (**Accepted**) i odbijenih (**Rejected**) zahtjeva  
+- **ASR (Authentication Success Rate)** procenat  
+- Prosječni **RTT (Round Trip Time)**  
+- Ukupan broj retransmisija razvrstan po klijentu i serveru  
+
+Svi ovi podaci se automatski dopisuju u CSV fajl, što omogućava hronološko praćenje različitih testova.
+
+# Generisani fajlovi
+
+- `proba-0-0.pcap` → Zapis mrežnog saobraćaja na mrežnom interfejsu klijenta  
+- `proba-1-0.pcap` → Zapis mrežnog saobraćaja na mrežnom interfejsu servera  
+- `aaa_simulation_results.csv` → Tabela sa svim statističkim podacima (RTT, retransmisije, bajtovi)  
+
+# Licenca
+
+Ovaj kod je razvijen u istraživačke i edukativne svrhe za analizu AAA protokola u simuliranim mrežnim okruženjima.
