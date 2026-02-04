@@ -1,1 +1,0 @@
-za kreiranje scratch foldera

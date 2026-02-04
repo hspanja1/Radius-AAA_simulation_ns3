@@ -1,1 +1,0 @@
-za formiranje foldera model
