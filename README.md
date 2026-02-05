@@ -19,7 +19,7 @@ Glavni cilj je analiza uticaja mrežnih gubitaka (Error Rate) i kašnjenja proce
 
 ## Struktura projekta
 
-Projekat se sastoji od sledećih komponenti:
+Projekat se sastoji od sljedećih komponenti:
 
 ### Aplikacijski sloj (`ns-3/src/applications/model/`)
 - `sptm-sink.h` / `sptm-sink.cc` - Server aplikacija koja prima i obrađuje AAA zahtjeve
@@ -173,7 +173,7 @@ cd /putanja/do/ns-3/
 
 Simulaciju pokrećete standardnom **ns-3** komandom. Možete koristiti podrazumijevane parametre ili unijeti vlastite putem komandne linije.
 
-## Primer osnovnog pokretanja
+## Primjer osnovnog pokretanja
 ```bash
 ./ns3 run "scratch/aaa_sim"
 
@@ -192,7 +192,7 @@ Simulacija podržava sljedeće argumente za prilagođavanje scenarija:
 | `--csvFile`   | Ime izlazne CSV datoteke sa rezultatima       | aaa_simulation_results.csv     |
 | `--enableCsv` | Omogući ili onemogući CSV izvoz (true/false)  | true                           |
 
-# Primer pokretanja sa 5% gubitka paketa i 20% šanse za odbijanje zahtjeva
+# Primjer pokretanja sa 5% gubitka paketa i 20% šanse za odbijanje zahtjeva
 
 ```bash
 ./ns3 run "scratch/aaa_sim --errorRate=0.05 --rejectProb=0.2"
